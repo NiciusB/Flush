@@ -7,7 +7,7 @@ let ctxWorker: OffscreenCanvasRenderingContext2D = null
 let layout: LayoutItem = null
 
 export default function handleMessage(message: { type: FlushWorkerMessageTypes; data: Object }) {
-  console.log('Received message on worker', message)
+  console.log(`Received \`${message.type}\` on worker`, message.data)
 
   switch (message.type) {
     case FlushWorkerMessageTypes.Canvas: {
