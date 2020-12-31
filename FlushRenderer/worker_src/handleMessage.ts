@@ -1,5 +1,10 @@
 import yoga, { Node } from 'yoga-layout-prebuilt'
-import { FlushWorkerMessageAddRect, FlushWorkerMessageCanvas, FlushWorkerMessageTypes } from '../shared/workerMessages'
+import {
+  FlushWorkerMessageAddRect,
+  FlushWorkerMessageCanvas,
+  FlushWorkerMessageResizeCanvas,
+  FlushWorkerMessageTypes,
+} from '../shared/workerMessages'
 import redrawCanvas, { LayoutItem } from './redrawCanvas'
 
 let canvas: OffscreenCanvas = null
@@ -24,6 +29,15 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
       root.setFlexWrap(yoga.WRAP_WRAP)
 
       layout = { node: root, style: { backgroundColor: '#f1f1f1' }, children: [] }
+
+      redrawCanvas(canvas, ctxWorker, layout)
+      break
+    }
+    case FlushWorkerMessageTypes.ResizeCanvas: {
+      const data = message.data as FlushWorkerMessageResizeCanvas
+
+      canvas.width = data.width
+      canvas.height = data.height
 
       redrawCanvas(canvas, ctxWorker, layout)
       break

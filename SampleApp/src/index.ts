@@ -3,14 +3,6 @@ import FlushRenderer from 'flush-renderer'
 const canvas = document.getElementById('canvasA') as HTMLCanvasElement
 const addRectButton = document.getElementById('addRect') as HTMLButtonElement
 
-// Resize to fill browser window dynamically
-window.addEventListener('resize', resizeCanvas, false)
-function resizeCanvas() {
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-}
-resizeCanvas()
-
 const flushRenderer = new FlushRenderer(canvas)
 
 addRectButton.onclick = () => {

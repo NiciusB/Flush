@@ -8,7 +8,7 @@ export type LayoutItem = {
 
 export default function redrawCanvas(
   canvas: OffscreenCanvas,
-  ctxWorker: OffscreenCanvasRenderingContext2D,
+  ctx: OffscreenCanvasRenderingContext2D,
   layout: LayoutItem
 ) {
   layout.node.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
@@ -28,10 +28,19 @@ export default function redrawCanvas(
     })
   } while (queue.length)
 
-  ctxWorker.clearRect(0, 0, canvas.width, canvas.height)
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+  // Fill gb with gradient
+  var grd = ctx.createLinearGradient(0, 0, 0, canvas.height)
+  grd.addColorStop(0.3, '#FFFFFF')
+  grd.addColorStop(1, '#AAAAAA')
+  ctx.fillStyle = grd
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // Render every rect
   renderRects.forEach((renderRect) => {
-    ctxWorker.fillStyle = renderRect.color
-    ctxWorker.fillRect(renderRect.left, renderRect.top, renderRect.width, renderRect.height)
+    ctx.fillStyle = renderRect.color
+    ctx.fillRect(renderRect.left, renderRect.top, renderRect.width, renderRect.height)
   })
 }

@@ -9,14 +9,24 @@ export default class FlushRenderer {
       throw new Error('Oh! Looks like your browser does not support OffscreenCanvas :(')
     }
 
+    // Setup worker
     this._worker = generateInlineWorker()
-
-    var offCanvas = canvas.transferControlToOffscreen()
-    this.postWorkerMessage(FlushWorkerMessageTypes.Canvas, { canvas: offCanvas }, [offCanvas])
 
     this._worker.addEventListener('message', (msg: any) => {
       this.onWorkerMessageReceived(msg)
     })
+
+    // Offsend canvas to worker
+    var offCanvas = canvas.transferControlToOffscreen()
+    this.postWorkerMessage(FlushWorkerMessageTypes.Canvas, { canvas: offCanvas }, [offCanvas])
+
+    // Handle resizes
+    const resizeCanvas = () => {
+      const size = canvas.getBoundingClientRect()
+      this.postWorkerMessage(FlushWorkerMessageTypes.ResizeCanvas, { width: size.width, height: size.height })
+    }
+    const resizeObserver = new ResizeObserver(resizeCanvas)
+    resizeObserver.observe(canvas)
   }
 
   private onWorkerMessageReceived(msg) {
