@@ -1,30 +1,25 @@
 import yoga from 'yoga-layout-prebuilt'
-
-export type LayoutItem = {
-  node: yoga.YogaNode
-  style: { backgroundColor: string }
-  children: LayoutItem[]
-}
+import FlushElement from './classes/FlushElement'
 
 export default function redrawCanvas(
   canvas: OffscreenCanvas,
   ctx: OffscreenCanvasRenderingContext2D,
-  layout: LayoutItem
+  rootElm: FlushElement
 ) {
-  layout.node.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
+  rootElm.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
 
   const renderRects = []
-  const queue = [layout]
+  const queue = [rootElm]
 
   do {
-    const { node, style, children } = queue.shift()
-    children.forEach((child) => {
+    const currElm = queue.shift()
+    currElm.getChildren().forEach((child) => {
       queue.push(child)
     })
 
     renderRects.push({
-      ...node.getComputedLayout(),
-      color: style.backgroundColor,
+      ...currElm.getComputedLayout(),
+      color: currElm.style.backgroundColor,
     })
   } while (queue.length)
 

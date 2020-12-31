@@ -5,11 +5,12 @@ import {
   FlushWorkerMessageResizeCanvas,
   FlushWorkerMessageTypes,
 } from '../shared/workerMessages'
-import redrawCanvas, { LayoutItem } from './redrawCanvas'
+import FlushElement from './classes/FlushElement'
+import redrawCanvas from './redrawCanvas'
 
 let canvas: OffscreenCanvas = null
 let ctxWorker: OffscreenCanvasRenderingContext2D = null
-let layout: LayoutItem = null
+let rootElm: FlushElement = null
 
 export default function handleMessage(message: { type: FlushWorkerMessageTypes; data: Object }) {
   console.log(`Received \`${message.type}\` on worker`, message.data)
@@ -21,16 +22,17 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
       canvas = data.canvas
       ctxWorker = canvas.getContext('2d')
 
-      const root = Node.create()
-      root.setWidth(canvas.width)
-      root.setHeight(canvas.height)
-      root.setJustifyContent(yoga.JUSTIFY_CENTER)
-      root.setAlignItems(yoga.ALIGN_CENTER)
-      root.setFlexWrap(yoga.WRAP_WRAP)
+      rootElm = new FlushElement()
+      rootElm.style = {
+        width: canvas.width,
+        height: canvas.height,
+        backgroundColor: '#4a4',
+        justifyContent: yoga.JUSTIFY_CENTER,
+        alignItems: yoga.ALIGN_CENTER,
+        flexWrap: yoga.WRAP_WRAP,
+      }
 
-      layout = { node: root, style: { backgroundColor: '#f1f1f1' }, children: [] }
-
-      redrawCanvas(canvas, ctxWorker, layout)
+      redrawCanvas(canvas, ctxWorker, rootElm)
       break
     }
     case FlushWorkerMessageTypes.ResizeCanvas: {
@@ -39,21 +41,26 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
       canvas.width = data.width
       canvas.height = data.height
 
-      redrawCanvas(canvas, ctxWorker, layout)
+      rootElm.style.width = canvas.width
+      rootElm.style.height = canvas.height
+
+      redrawCanvas(canvas, ctxWorker, rootElm)
       break
     }
     case FlushWorkerMessageTypes.AddRect: {
       const data = message.data as FlushWorkerMessageAddRect
 
-      const newNode = Node.create()
-      newNode.setWidth(data.w)
-      newNode.setHeight(data.h)
-      newNode.setMargin(yoga.EDGE_ALL, 5)
+      const newElm = new FlushElement()
+      newElm.style = {
+        width: data.w,
+        height: data.h,
+        margin: 5,
+        backgroundColor: data.color,
+      }
 
-      layout.node.insertChild(newNode, layout.node.getChildCount())
-      layout.children.push({ node: newNode, style: { backgroundColor: data.color }, children: [] })
+      rootElm.append(newElm)
 
-      redrawCanvas(canvas, ctxWorker, layout)
+      redrawCanvas(canvas, ctxWorker, rootElm)
       break
     }
     default: {
