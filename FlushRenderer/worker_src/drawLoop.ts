@@ -1,13 +1,19 @@
 import yoga from 'yoga-layout-prebuilt'
 import FlushElement from './classes/FlushElement'
 
-export default function redrawCanvas(
+export default function drawLoop(
   canvas: OffscreenCanvas,
   ctx: OffscreenCanvasRenderingContext2D,
   rootElm: FlushElement
 ) {
-  rootElm.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
+  try {
+    redrawCanvas(canvas, ctx, rootElm)
+  } finally {
+    requestAnimationFrame(() => drawLoop(canvas, ctx, rootElm))
+  }
+}
 
+function redrawCanvas(canvas: OffscreenCanvas, ctx: OffscreenCanvasRenderingContext2D, rootElm: FlushElement) {
   const renderRects = []
   const queue = [rootElm]
 

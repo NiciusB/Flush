@@ -6,7 +6,7 @@ import {
   FlushWorkerMessageTypes,
 } from '../shared/workerMessages'
 import FlushElement from './classes/FlushElement'
-import redrawCanvas from './redrawCanvas'
+import drawLoop from './drawLoop'
 
 let canvas: OffscreenCanvas = null
 let ctxWorker: OffscreenCanvasRenderingContext2D = null
@@ -32,7 +32,8 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
         flexWrap: yoga.WRAP_WRAP,
       }
 
-      redrawCanvas(canvas, ctxWorker, rootElm)
+      rootElm.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
+      drawLoop(canvas, ctxWorker, rootElm)
       break
     }
     case FlushWorkerMessageTypes.ResizeCanvas: {
@@ -44,7 +45,7 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
       rootElm.style.width = canvas.width
       rootElm.style.height = canvas.height
 
-      redrawCanvas(canvas, ctxWorker, rootElm)
+      rootElm.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
       break
     }
     case FlushWorkerMessageTypes.AddRect: {
@@ -60,7 +61,7 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
 
       rootElm.append(newElm)
 
-      redrawCanvas(canvas, ctxWorker, rootElm)
+      rootElm.calculateLayout(canvas.width, canvas.height, yoga.DIRECTION_LTR)
       break
     }
     default: {
