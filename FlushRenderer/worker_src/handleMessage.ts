@@ -26,7 +26,6 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
       rootElm.style = {
         width: canvas.width,
         height: canvas.height,
-        backgroundColor: '#4a4',
         justifyContent: yoga.JUSTIFY_CENTER,
         alignItems: yoga.ALIGN_CENTER,
         flexWrap: yoga.WRAP_WRAP,
@@ -57,6 +56,7 @@ export default function handleMessage(message: { type: FlushWorkerMessageTypes; 
         height: data.h,
         margin: 5,
         backgroundColor: data.color,
+        borderRadius: data.radius,
       }
 
       rootElm.append(newElm)

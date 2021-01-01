@@ -17,4 +17,5 @@ export type FlushWorkerMessageAddRect = {
   w: number
   h: number
   color: string
+  radius: number
 }

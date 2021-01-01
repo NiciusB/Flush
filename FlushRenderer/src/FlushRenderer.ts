@@ -43,11 +43,12 @@ export default class FlushRenderer {
     )
   }
 
-  addRect(w: number, h: number, color: string) {
+  addRect(w: number, h: number, color: string, radius: number) {
     this.postWorkerMessage(FlushWorkerMessageTypes.AddRect, {
       w,
       h,
       color,
+      radius,
     })
   }
 }

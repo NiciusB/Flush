@@ -31,7 +31,8 @@ export default class FlushElement {
     for (const key in this.style) {
       const value = this.style[key]
       switch (key) {
-        case 'backgroundColor': {
+        case 'backgroundColor':
+        case 'borderRadius': {
           // Not for layout. ignore
           break
         }

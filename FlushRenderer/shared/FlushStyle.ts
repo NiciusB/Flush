@@ -5,6 +5,7 @@ export type FlushStyle = {
   height?: number
   backgroundColor?: string
   margin?: number
+  borderRadius?: number
   justifyContent?: yoga.YogaJustifyContent
   alignItems?: yoga.YogaAlign
   flexWrap?: yoga.YogaFlexWrap

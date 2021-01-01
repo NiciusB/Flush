@@ -6,7 +6,7 @@ const addRectButton = document.getElementById('addRect') as HTMLButtonElement
 const flushRenderer = new FlushRenderer(canvas)
 
 addRectButton.onclick = () => {
-  flushRenderer.addRect(50 + Math.random() * 50, 50 + Math.random() * 50, getRandomColor())
+  flushRenderer.addRect(50 + Math.random() * 50, 50 + Math.random() * 50, getRandomColor(), Math.random() * 20)
 }
 
 function getRandomColor() {
